@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ExerciseService } from '../../services/exercise.service';
 import { WorkoutService } from '../../services/workout.service';
+import { generateWorkoutName } from '../../services/workout-name.util';
 import { WorkoutExerciseEntry, WorkoutSetEntry } from '../../models/workout.model';
 
 function todayIso(): string {
@@ -96,8 +97,13 @@ export class LogWorkoutComponent {
 
   save() {
     if (!this.canSave()) return;
+    const muscleGroups = this.entries()
+      .map((e) => this.exerciseService.byId(e.exerciseId)?.muscleGroup)
+      .filter((g): g is NonNullable<typeof g> => !!g);
+
     this.workoutService.add({
       date: this.date(),
+      name: generateWorkoutName(muscleGroups),
       exercises: this.entries(),
       notes: this.notes() || undefined,
     });

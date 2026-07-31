@@ -9,11 +9,30 @@
   @for (session of sessions(); track session.id) {
     <div class="card session-card" (click)="toggle(session.id)">
       <div class="session-card__header">
-        <div>
-          <span class="session-card__date">{{ session.date }}</span>
-          <span class="pill">{{ session.exercises.length }} exercise{{ session.exercises.length === 1 ? '' : 's' }}</span>
+        <div class="session-card__title">
+          @if (renamingId() === session.id) {
+            <input
+              class="input session-card__rename-input"
+              [ngModel]="nameDraft()"
+              (ngModelChange)="nameDraft.set($event)"
+              (click)="$event.stopPropagation()"
+              (keydown.enter)="saveRename(session.id, $event)"
+              (keydown.escape)="cancelRename($event)"
+              autofocus
+            />
+            <button class="btn btn--primary" (click)="saveRename(session.id, $event)">Save</button>
+            <button class="btn" (click)="cancelRename($event)">Cancel</button>
+          } @else {
+            <span class="session-card__name">{{ displayName(session) }}</span>
+            <button class="session-card__rename-btn" (click)="startRename(session.id, displayName(session), $event)">Rename</button>
+          }
         </div>
         <button class="btn btn--danger" (click)="remove(session.id, $event)">Delete</button>
+      </div>
+
+      <div class="session-card__meta">
+        <span class="session-card__date">{{ session.date }}</span>
+        <span class="pill">{{ session.exercises.length }} exercise{{ session.exercises.length === 1 ? '' : 's' }}</span>
       </div>
 
       @if (expandedId() === session.id) {

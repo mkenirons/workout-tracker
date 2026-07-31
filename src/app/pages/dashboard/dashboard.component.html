@@ -46,7 +46,7 @@
   <div class="card last-session">
     <h2>Last workout</h2>
     @if (lastSession(); as session) {
-      <p class="last-session__date">{{ session.date }}</p>
+      <p class="last-session__date">{{ session.name || 'Workout' }} — {{ session.date }}</p>
       <ul>
         @for (ex of session.exercises; track ex.exerciseId) {
           <li>{{ ex.exerciseName }} — {{ ex.sets.length }} sets</li>

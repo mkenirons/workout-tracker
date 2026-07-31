@@ -17,6 +17,7 @@ export class NavComponent {
     { path: '/log', label: 'Log Workout' },
     { path: '/history', label: 'History' },
     { path: '/exercises', label: 'Exercises' },
+    { path: '/progress', label: 'Progress' },
     { path: '/body-stats', label: 'Body Stats' },
   ];
 

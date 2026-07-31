@@ -28,6 +28,12 @@ export class WorkoutService {
     this._sessions.update((list) => [...list, newSession]);
   }
 
+  update(id: string, changes: Partial<Omit<WorkoutSession, 'id'>>): void {
+    this._sessions.update((list) =>
+      list.map((s) => (s.id === id ? { ...s, ...changes } : s))
+    );
+  }
+
   remove(id: string): void {
     this._sessions.update((list) => list.filter((s) => s.id !== id));
   }
@@ -51,6 +57,27 @@ export class WorkoutService {
 
   totalSessions(): number {
     return this._sessions().length;
+  }
+
+  /**
+   * Top-set weight (and its reps) logged for an exercise in each session that
+   * included it, sorted oldest to newest. Powers the progress chart.
+   */
+  exerciseHistory(exerciseId: string): { date: string; weightKg: number; reps: number }[] {
+    const points: { date: string; weightKg: number; reps: number }[] = [];
+    for (const session of this._sessions()) {
+      const entry = session.exercises.find((e) => e.exerciseId === exerciseId);
+      if (!entry) continue;
+      let top: { weightKg: number; reps: number } | null = null;
+      for (const set of entry.sets) {
+        if (set.weightKg == null) continue;
+        if (!top || set.weightKg > top.weightKg) {
+          top = { weightKg: set.weightKg, reps: set.reps ?? 0 };
+        }
+      }
+      if (top) points.push({ date: session.date, ...top });
+    }
+    return points.sort((a, b) => a.date.localeCompare(b.date));
   }
 
   lastSession(): WorkoutSession | null {

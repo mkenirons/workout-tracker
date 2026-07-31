@@ -1,0 +1,93 @@
+<div class="page">
+  <h1>Progress</h1>
+  <p class="subtitle">Top set weight per session, over time.</p>
+
+  @if (exercisesWithHistory().size === 0) {
+    <p class="empty-state">Log a few workouts to start seeing progress here.</p>
+  } @else {
+    <div class="card selector-card">
+      <label class="label">Exercise</label>
+      <select class="input" [ngModel]="selectedId()" (ngModelChange)="onSelectExercise($event)">
+        @for (ex of exercises(); track ex.id) {
+          <option [value]="ex.id" [disabled]="!exercisesWithHistory().has(ex.id)">
+            {{ ex.name }}{{ exercisesWithHistory().has(ex.id) ? '' : ' (no data yet)' }}
+          </option>
+        }
+      </select>
+    </div>
+
+    @if (points().length > 0) {
+      <div class="card chart-card">
+        <h2>{{ selectedExercise()?.name }}</h2>
+
+        <svg
+          class="chart"
+          [attr.viewBox]="'0 0 ' + chartW + ' ' + chartH"
+          (pointermove)="onPointerMove($event)"
+          (pointerleave)="onPointerLeave()"
+        >
+          <!-- gridlines + y labels -->
+          @for (tick of yTicks(); track tick) {
+            <line
+              class="gridline"
+              [attr.x1]="innerLeft"
+              [attr.x2]="innerRight"
+              [attr.y1]="yFor(tick)"
+              [attr.y2]="yFor(tick)"
+            />
+            <text class="axis-label" [attr.x]="innerLeft - 8" [attr.y]="yFor(tick) + 4" text-anchor="end">
+              {{ tick }}
+            </text>
+          }
+
+          <!-- line -->
+          @if (linePath()) {
+            <path class="line" [attr.d]="linePath()" />
+          }
+
+          <!-- crosshair -->
+          @if (hoveredPoint(); as hp) {
+            <line class="crosshair" [attr.x1]="hp.x" [attr.x2]="hp.x" [attr.y1]="innerTop" [attr.y2]="innerBottom" />
+          }
+
+          <!-- points -->
+          @for (p of points(); track p.date; let i = $index) {
+            <circle class="dot" [attr.cx]="p.x" [attr.cy]="p.y" r="4" />
+            <circle class="hit" [attr.cx]="p.x" [attr.cy]="p.y" r="12" />
+            @if (i === points().length - 1) {
+              <text class="end-label" [attr.x]="p.x" [attr.y]="p.y - 12" text-anchor="middle">{{ p.weightKg }}kg</text>
+            }
+          }
+
+          <!-- tooltip -->
+          @if (hoveredPoint(); as hp) {
+            <g [attr.transform]="'translate(' + (tooltipFlipped() ? hp.x - 138 : hp.x + 10) + ',' + (innerTop) + ')'">
+              <rect class="tooltip-bg" width="128" height="42" rx="6"></rect>
+              <text class="tooltip-value" x="10" y="18">{{ hp.weightKg }}kg × {{ hp.reps }}</text>
+              <text class="tooltip-date" x="10" y="33">{{ hp.date }}</text>
+            </g>
+          }
+        </svg>
+
+        <div class="table-wrap">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Top set</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of tableRowsDesc(); track row.date) {
+                <tr>
+                  <td>{{ row.date }}</td>
+                  <td>{{ row.weightKg }}kg × {{ row.reps }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+</div>

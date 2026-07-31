@@ -13,6 +13,7 @@ export interface WorkoutExerciseEntry {
 export interface WorkoutSession {
   id: string;
   date: string;
+  name: string;
   exercises: WorkoutExerciseEntry[];
   notes?: string;
 }
