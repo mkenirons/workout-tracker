@@ -1,0 +1,73 @@
+<div class="page">
+  <h1>Log Workout</h1>
+  <p class="subtitle">Pick a date, add exercises, and record your sets.</p>
+
+  <div class="card top-bar">
+    <div>
+      <label class="label">Date</label>
+      <input class="input" type="date" [ngModel]="date()" (ngModelChange)="date.set($event)" />
+    </div>
+    <div class="add-exercise">
+      <label class="label">Add exercise</label>
+      <div class="add-exercise__row">
+        <select class="input" [ngModel]="selectedExerciseId()" (ngModelChange)="selectedExerciseId.set($event)">
+          <option value="">Select an exercise…</option>
+          @for (ex of exercises(); track ex.id) {
+            <option [value]="ex.id">{{ ex.name }} ({{ ex.muscleGroup }})</option>
+          }
+        </select>
+        <button class="btn btn--primary" (click)="addExercise()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  @for (entry of entries(); track entry.exerciseId) {
+    <div class="card exercise-block">
+      <div class="exercise-block__header">
+        <h3>{{ entry.exerciseName }}</h3>
+        <button class="btn btn--danger" (click)="removeExercise(entry.exerciseId)">Remove</button>
+      </div>
+      <div class="sets-table">
+        <div class="sets-table__row sets-table__row--head">
+          <span>Set</span>
+          <span>Weight (kg)</span>
+          <span>Reps</span>
+          <span></span>
+        </div>
+        @for (set of entry.sets; track set.setNumber) {
+          <div class="sets-table__row">
+            <span>{{ set.setNumber }}</span>
+            <input
+              class="input"
+              type="number"
+              min="0"
+              step="0.5"
+              [ngModel]="set.weightKg"
+              (ngModelChange)="updateSet(entry.exerciseId, set.setNumber, 'weightKg', $event)"
+            />
+            <input
+              class="input"
+              type="number"
+              min="0"
+              [ngModel]="set.reps"
+              (ngModelChange)="updateSet(entry.exerciseId, set.setNumber, 'reps', $event)"
+            />
+            <button class="btn btn--danger" (click)="removeSet(entry.exerciseId, set.setNumber)">✕</button>
+          </div>
+        }
+      </div>
+      <button class="btn" (click)="addSet(entry.exerciseId)">+ Add set</button>
+    </div>
+  }
+
+  @if (entries().length > 0) {
+    <div class="card notes-card">
+      <label class="label">Notes (optional)</label>
+      <textarea class="input" rows="3" [ngModel]="notes()" (ngModelChange)="notes.set($event)" placeholder="How did it feel?"></textarea>
+    </div>
+
+    <button class="btn btn--primary save-btn" [disabled]="!canSave()" (click)="save()">Save workout</button>
+  } @else {
+    <p class="empty-state">Add an exercise above to start logging sets.</p>
+  }
+</div>

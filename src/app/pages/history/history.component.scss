@@ -1,0 +1,68 @@
+.subtitle {
+  color: var(--text-muted);
+  margin-top: 0;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.session-card {
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+  }
+
+  &__date {
+    font-weight: 600;
+  }
+
+  &__details {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  &__notes {
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 0.25rem 0 0;
+  }
+}
+
+.exercise-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sets-summary {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.set-chip {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}

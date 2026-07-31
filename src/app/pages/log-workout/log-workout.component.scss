@@ -1,0 +1,79 @@
+.subtitle {
+  color: var(--text-muted);
+  margin-top: 0;
+}
+
+.top-bar {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+
+  > div {
+    min-width: 200px;
+  }
+}
+
+.add-exercise {
+  flex: 1;
+
+  &__row {
+    display: flex;
+    gap: 0.5rem;
+
+    select {
+      flex: 1;
+    }
+  }
+}
+
+.exercise-block {
+  margin-bottom: 1rem;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+
+    h3 {
+      margin: 0;
+    }
+  }
+}
+
+.sets-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 40px 1fr 1fr 36px;
+    gap: 0.5rem;
+    align-items: center;
+
+    &--head {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.notes-card {
+  margin: 1rem 0;
+}
+
+.save-btn {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2rem 0;
+}

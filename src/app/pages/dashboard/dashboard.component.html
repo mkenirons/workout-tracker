@@ -1,0 +1,53 @@
+<div class="page">
+  <h1>Dashboard</h1>
+  <p class="subtitle">Welcome back — here's where you stand.</p>
+
+  <div class="stats-grid">
+    <div class="card stat">
+      <span class="stat__value">{{ totalSessions() }}</span>
+      <span class="stat__label">Workouts logged</span>
+    </div>
+    <div class="card stat">
+      <span class="stat__value">{{ totalExercises() }}</span>
+      <span class="stat__label">Exercises in library</span>
+    </div>
+    <div class="card stat">
+      <span class="stat__value">{{ latestStat()?.weightKg ?? '—' }}<small>kg</small></span>
+      <span class="stat__label">Current weight</span>
+    </div>
+    <div class="card stat">
+      <span class="stat__value">{{ latestStat()?.bodyFatPct ?? '—' }}<small>%</small></span>
+      <span class="stat__label">Body fat</span>
+    </div>
+  </div>
+
+  <div class="card goal-card">
+    <h2>{{ goal().label }}</h2>
+    <div class="goal-card__bar">
+      <div class="goal-card__fill" [style.width.%]="weightProgressPct()"></div>
+    </div>
+    <div class="goal-card__meta">
+      <span>{{ goal().startWeightKg }}kg start</span>
+      <span class="pill">{{ weightProgressPct() }}% there</span>
+      <span>{{ goal().targetWeightKg }}kg target</span>
+    </div>
+    @if (kgToTarget() !== null) {
+      <p class="goal-card__note">{{ kgToTarget() }}kg to go · target body fat {{ goal().targetBodyFatLowPct }}–{{ goal().targetBodyFatHighPct }}%</p>
+    }
+  </div>
+
+  <div class="card last-session">
+    <h2>Last workout</h2>
+    @if (lastSession(); as session) {
+      <p class="last-session__date">{{ session.date }}</p>
+      <ul>
+        @for (ex of session.exercises; track ex.exerciseId) {
+          <li>{{ ex.exerciseName }} — {{ ex.sets.length }} sets</li>
+        }
+      </ul>
+    } @else {
+      <p class="subtitle">No workouts logged yet.</p>
+    }
+    <a class="btn btn--primary" routerLink="/log">Log a workout</a>
+  </div>
+</div>

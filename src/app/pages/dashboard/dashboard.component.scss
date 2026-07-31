@@ -1,0 +1,79 @@
+.subtitle {
+  color: var(--text-muted);
+  margin-top: 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__value {
+    font-size: 1.8rem;
+    font-weight: 700;
+
+    small {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-left: 0.15rem;
+    }
+  }
+
+  &__label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+}
+
+.goal-card {
+  margin-bottom: 1.5rem;
+
+  &__bar {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--surface-raised);
+    overflow: hidden;
+    margin: 0.75rem 0;
+  }
+
+  &__fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+
+  &__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  &__note {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 0;
+  }
+}
+
+.last-session {
+  ul {
+    padding-left: 1.2rem;
+    color: var(--text-muted);
+  }
+
+  &__date {
+    color: var(--accent);
+    font-weight: 600;
+    margin-top: 0;
+  }
+}

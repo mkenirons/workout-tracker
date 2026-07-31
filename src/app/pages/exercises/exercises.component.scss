@@ -1,0 +1,76 @@
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  margin-top: 0;
+}
+
+.form-card {
+  margin: 1rem 0 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.group-heading {
+  margin-top: 2rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.exercise-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.exercise-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    h3 {
+      font-size: 1rem;
+    }
+  }
+
+  &__pr {
+    color: var(--success);
+    font-size: 0.85rem;
+    margin: 0;
+
+    &--empty {
+      color: var(--text-muted);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+}
