@@ -27,7 +27,10 @@
             <button class="session-card__rename-btn" (click)="startRename(session.id, displayName(session), $event)">Rename</button>
           }
         </div>
-        <button class="btn btn--danger" (click)="remove(session.id, $event)">Delete</button>
+        <div class="session-card__actions">
+          <a class="btn" [routerLink]="['/log', session.id]" (click)="$event.stopPropagation()">Edit</a>
+          <button class="btn btn--danger" (click)="remove(session.id, $event)">Delete</button>
+        </div>
       </div>
 
       <div class="session-card__meta">

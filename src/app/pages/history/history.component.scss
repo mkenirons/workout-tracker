@@ -27,6 +27,12 @@
     flex-wrap: wrap;
   }
 
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
   &__name {
     font-weight: 700;
     font-size: 1.05rem;

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ExerciseService } from '../../services/exercise.service';
 import { WorkoutService } from '../../services/workout.service';
 import { generateWorkoutName } from '../../services/workout-name.util';
@@ -21,12 +21,29 @@ export class LogWorkoutComponent {
   private exerciseService = inject(ExerciseService);
   private workoutService = inject(WorkoutService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   exercises = this.exerciseService.exercises;
+  editingId = signal<string | null>(null);
   date = signal(todayIso());
+  name = signal('');
   notes = signal('');
   entries = signal<WorkoutExerciseEntry[]>([]);
   selectedExerciseId = signal<string>('');
+
+  constructor() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      const session = this.workoutService.byId(id);
+      if (session) {
+        this.editingId.set(id);
+        this.date.set(session.date);
+        this.name.set(session.name ?? '');
+        this.notes.set(session.notes ?? '');
+        this.entries.set(session.exercises.map((e) => ({ ...e, sets: e.sets.map((s) => ({ ...s })) })));
+      }
+    }
+  }
 
   addExercise() {
     const id = this.selectedExerciseId();
@@ -101,12 +118,24 @@ export class LogWorkoutComponent {
       .map((e) => this.exerciseService.byId(e.exerciseId)?.muscleGroup)
       .filter((g): g is NonNullable<typeof g> => !!g);
 
-    this.workoutService.add({
-      date: this.date(),
-      name: generateWorkoutName(muscleGroups),
-      exercises: this.entries(),
-      notes: this.notes() || undefined,
-    });
+    const name = this.name().trim() || generateWorkoutName(muscleGroups);
+    const id = this.editingId();
+
+    if (id) {
+      this.workoutService.update(id, {
+        date: this.date(),
+        name,
+        exercises: this.entries(),
+        notes: this.notes() || undefined,
+      });
+    } else {
+      this.workoutService.add({
+        date: this.date(),
+        name,
+        exercises: this.entries(),
+        notes: this.notes() || undefined,
+      });
+    }
     this.router.navigate(['/history']);
   }
 }

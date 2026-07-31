@@ -1,11 +1,17 @@
 <div class="page">
-  <h1>Log Workout</h1>
-  <p class="subtitle">Pick a date, add exercises, and record your sets.</p>
+  <h1>{{ editingId() ? 'Edit Workout' : 'Log Workout' }}</h1>
+  <p class="subtitle">
+    {{ editingId() ? 'Update the date, exercises, sets, or name.' : 'Pick a date, add exercises, and record your sets.' }}
+  </p>
 
   <div class="card top-bar">
     <div>
       <label class="label">Date</label>
       <input class="input" type="date" [ngModel]="date()" (ngModelChange)="date.set($event)" />
+    </div>
+    <div>
+      <label class="label">Name (optional)</label>
+      <input class="input" [ngModel]="name()" (ngModelChange)="name.set($event)" placeholder="Auto-generated if left blank" />
     </div>
     <div class="add-exercise">
       <label class="label">Add exercise</label>
@@ -66,7 +72,9 @@
       <textarea class="input" rows="3" [ngModel]="notes()" (ngModelChange)="notes.set($event)" placeholder="How did it feel?"></textarea>
     </div>
 
-    <button class="btn btn--primary save-btn" [disabled]="!canSave()" (click)="save()">Save workout</button>
+    <button class="btn btn--primary save-btn" [disabled]="!canSave()" (click)="save()">
+      {{ editingId() ? 'Update workout' : 'Save workout' }}
+    </button>
   } @else {
     <p class="empty-state">Add an exercise above to start logging sets.</p>
   }

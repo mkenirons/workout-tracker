@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { WorkoutService } from '../../services/workout.service';
 import { ExerciseService } from '../../services/exercise.service';
 import { generateWorkoutName } from '../../services/workout-name.util';
@@ -8,7 +9,7 @@ import { WorkoutSession } from '../../models/workout.model';
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
 })

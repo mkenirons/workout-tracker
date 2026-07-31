@@ -9,6 +9,7 @@ import { ProgressComponent } from './pages/progress/progress.component';
 export const routes: Routes = [
   { path: '', component: DashboardComponent },
   { path: 'log', component: LogWorkoutComponent },
+  { path: 'log/:id', component: LogWorkoutComponent },
   { path: 'history', component: HistoryComponent },
   { path: 'exercises', component: ExercisesComponent },
   { path: 'progress', component: ProgressComponent },
