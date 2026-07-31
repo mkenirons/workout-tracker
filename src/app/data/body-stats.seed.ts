@@ -1,18 +1,15 @@
 import { BodyGoal, BodyStatEntry } from '../models/body-stat.model';
 
-// Seeded from the "Birthday Goal Tracker" section of the user's spreadsheet.
+// No personal data is hardcoded here (this app is publicly hosted) —
+// set your own goal and entries from the Body Stats page; they're saved
+// only in your browser's localStorage, never in this source code.
 export const BODY_GOAL_SEED: BodyGoal = {
-  heightCm: 198,
-  startWeightKg: 103.5,
-  targetWeightKg: 97,
-  targetBodyFatLowPct: 22,
-  targetBodyFatHighPct: 23,
-  label: 'Birthday Goal',
+  heightCm: 0,
+  startWeightKg: 0,
+  targetWeightKg: 0,
+  targetBodyFatLowPct: 0,
+  targetBodyFatHighPct: 0,
+  label: 'My Goal',
 };
 
-export const BODY_STAT_SEED: BodyStatEntry[] = [
-  { id: 'seed-start', date: '2026-03-23', weightKg: 103.5, bodyFatPct: 27.5, notes: 'Starting point' },
-  { id: 'seed-week1', date: '2026-03-30', weightKg: 102.5, bodyFatPct: null, notes: 'Week 1 check-in' },
-  { id: 'seed-week7', date: '2026-05-11', weightKg: 100.9, bodyFatPct: 26.6, notes: 'Week 7 check-in' },
-  { id: 'seed-week16', date: '2026-07-13', weightKg: 99.35, bodyFatPct: 26.1, notes: 'Week 16 check-in' },
-];
+export const BODY_STAT_SEED: BodyStatEntry[] = [];

@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BodyStatsService } from '../../services/body-stats.service';
-import { BodyStatEntry } from '../../models/body-stat.model';
+import { BodyGoal, BodyStatEntry } from '../../models/body-stat.model';
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -20,6 +20,7 @@ export class BodyStatsComponent {
   goal = this.bodyStatsService.goal;
   entriesDesc = () => [...this.bodyStatsService.sortedByDateAsc()].reverse();
   progressPct = () => this.bodyStatsService.weightProgressPct();
+  goalIsSet = () => this.goal().targetWeightKg > 0 && this.goal().startWeightKg > 0;
 
   showForm = signal(false);
   draft = signal<Omit<BodyStatEntry, 'id'>>({
@@ -31,6 +32,9 @@ export class BodyStatsComponent {
     calories: null,
     notes: '',
   });
+
+  showGoalForm = signal(false);
+  goalDraft = signal<BodyGoal>(this.goal());
 
   startAdd() {
     this.draft.set({
@@ -66,5 +70,25 @@ export class BodyStatsComponent {
     if (confirm('Delete this entry?')) {
       this.bodyStatsService.remove(id);
     }
+  }
+
+  startEditGoal() {
+    this.goalDraft.set(this.goal());
+    this.showGoalForm.set(true);
+  }
+
+  cancelGoal() {
+    this.showGoalForm.set(false);
+  }
+
+  updateGoalField<K extends keyof BodyGoal>(field: K, raw: string) {
+    const isNumeric = field !== 'label';
+    const value = (isNumeric ? Number(raw) || 0 : raw) as BodyGoal[K];
+    this.goalDraft.update((g) => ({ ...g, [field]: value }));
+  }
+
+  saveGoal() {
+    this.bodyStatsService.updateGoal(this.goalDraft());
+    this.showGoalForm.set(false);
   }
 }

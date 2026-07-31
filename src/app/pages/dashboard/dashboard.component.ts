@@ -22,6 +22,7 @@ export class DashboardComponent {
 
   latestStat = computed(() => this.bodyStatsService.latest());
   goal = computed(() => this.bodyStatsService.goal());
+  goalIsSet = computed(() => this.goal().targetWeightKg > 0 && this.goal().startWeightKg > 0);
   weightProgressPct = computed(() => this.bodyStatsService.weightProgressPct());
 
   kgToTarget = computed(() => {

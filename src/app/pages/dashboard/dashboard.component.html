@@ -21,20 +21,27 @@
     </div>
   </div>
 
-  <div class="card goal-card">
-    <h2>{{ goal().label }}</h2>
-    <div class="goal-card__bar">
-      <div class="goal-card__fill" [style.width.%]="weightProgressPct()"></div>
+  @if (goalIsSet()) {
+    <div class="card goal-card">
+      <h2>{{ goal().label }}</h2>
+      <div class="goal-card__bar">
+        <div class="goal-card__fill" [style.width.%]="weightProgressPct()"></div>
+      </div>
+      <div class="goal-card__meta">
+        <span>{{ goal().startWeightKg }}kg start</span>
+        <span class="pill">{{ weightProgressPct() }}% there</span>
+        <span>{{ goal().targetWeightKg }}kg target</span>
+      </div>
+      @if (kgToTarget() !== null) {
+        <p class="goal-card__note">{{ kgToTarget() }}kg to go · target body fat {{ goal().targetBodyFatLowPct }}–{{ goal().targetBodyFatHighPct }}%</p>
+      }
     </div>
-    <div class="goal-card__meta">
-      <span>{{ goal().startWeightKg }}kg start</span>
-      <span class="pill">{{ weightProgressPct() }}% there</span>
-      <span>{{ goal().targetWeightKg }}kg target</span>
+  } @else {
+    <div class="card goal-card">
+      <p class="subtitle">No goal set yet.</p>
+      <a class="btn btn--primary" routerLink="/body-stats">Set a goal</a>
     </div>
-    @if (kgToTarget() !== null) {
-      <p class="goal-card__note">{{ kgToTarget() }}kg to go · target body fat {{ goal().targetBodyFatLowPct }}–{{ goal().targetBodyFatHighPct }}%</p>
-    }
-  </div>
+  }
 
   <div class="card last-session">
     <h2>Last workout</h2>

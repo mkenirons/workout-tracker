@@ -2,22 +2,67 @@
   <div class="header-row">
     <div>
       <h1>Body Stats</h1>
-      <p class="subtitle">{{ goal().label }} — height {{ goal().heightCm }}cm</p>
+      @if (goalIsSet()) {
+        <p class="subtitle">{{ goal().label }} — height {{ goal().heightCm }}cm</p>
+      } @else {
+        <p class="subtitle">Set a goal to track progress toward a target weight.</p>
+      }
     </div>
-    <button class="btn btn--primary" (click)="startAdd()">+ Add entry</button>
+    <div class="header-row__actions">
+      <button class="btn" (click)="startEditGoal()">{{ goalIsSet() ? 'Edit goal' : 'Set goal' }}</button>
+      <button class="btn btn--primary" (click)="startAdd()">+ Add entry</button>
+    </div>
   </div>
 
-  <div class="card goal-card">
-    <div class="goal-card__bar">
-      <div class="goal-card__fill" [style.width.%]="progressPct()"></div>
+  @if (showGoalForm()) {
+    <div class="card form-card">
+      <h2>Your goal</h2>
+      <div class="form-grid">
+        <div>
+          <label class="label">Label</label>
+          <input class="input" [ngModel]="goalDraft().label" (ngModelChange)="updateGoalField('label', $event)" placeholder="e.g. Summer Goal" />
+        </div>
+        <div>
+          <label class="label">Height (cm)</label>
+          <input class="input" type="number" [ngModel]="goalDraft().heightCm" (ngModelChange)="updateGoalField('heightCm', $event)" />
+        </div>
+        <div>
+          <label class="label">Start weight (kg)</label>
+          <input class="input" type="number" step="0.1" [ngModel]="goalDraft().startWeightKg" (ngModelChange)="updateGoalField('startWeightKg', $event)" />
+        </div>
+        <div>
+          <label class="label">Target weight (kg)</label>
+          <input class="input" type="number" step="0.1" [ngModel]="goalDraft().targetWeightKg" (ngModelChange)="updateGoalField('targetWeightKg', $event)" />
+        </div>
+        <div>
+          <label class="label">Target body fat low (%)</label>
+          <input class="input" type="number" step="0.1" [ngModel]="goalDraft().targetBodyFatLowPct" (ngModelChange)="updateGoalField('targetBodyFatLowPct', $event)" />
+        </div>
+        <div>
+          <label class="label">Target body fat high (%)</label>
+          <input class="input" type="number" step="0.1" [ngModel]="goalDraft().targetBodyFatHighPct" (ngModelChange)="updateGoalField('targetBodyFatHighPct', $event)" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn" (click)="cancelGoal()">Cancel</button>
+        <button class="btn btn--primary" (click)="saveGoal()">Save goal</button>
+      </div>
     </div>
-    <div class="goal-card__meta">
-      <span>{{ goal().startWeightKg }}kg start</span>
-      <span class="pill">{{ progressPct() }}% there</span>
-      <span>{{ goal().targetWeightKg }}kg target</span>
+  }
+
+  @if (goalIsSet()) {
+    <div class="card goal-card">
+      <div class="goal-card__bar">
+        <div class="goal-card__fill" [style.width.%]="progressPct()"></div>
+      </div>
+      <div class="goal-card__meta">
+        <span>{{ goal().startWeightKg }}kg start</span>
+        <span class="pill">{{ progressPct() }}% there</span>
+        <span>{{ goal().targetWeightKg }}kg target</span>
+      </div>
+      <p class="goal-card__note">Target body fat: {{ goal().targetBodyFatLowPct }}–{{ goal().targetBodyFatHighPct }}%</p>
     </div>
-    <p class="goal-card__note">Target body fat: {{ goal().targetBodyFatLowPct }}–{{ goal().targetBodyFatHighPct }}%</p>
-  </div>
+  }
 
   @if (showForm()) {
     <div class="card form-card">
