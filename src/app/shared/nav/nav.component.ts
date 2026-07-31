@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-nav',
@@ -9,6 +10,8 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './nav.component.scss',
 })
 export class NavComponent {
+  private auth = inject(AuthService);
+
   links = [
     { path: '/', label: 'Dashboard' },
     { path: '/log', label: 'Log Workout' },
@@ -16,4 +19,8 @@ export class NavComponent {
     { path: '/exercises', label: 'Exercises' },
     { path: '/body-stats', label: 'Body Stats' },
   ];
+
+  logout() {
+    this.auth.logout();
+  }
 }

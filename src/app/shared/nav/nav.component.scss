@@ -42,4 +42,21 @@
       }
     }
   }
+
+  &__logout {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.45rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+
+    &:hover {
+      color: var(--text);
+      background: var(--surface-raised);
+    }
+  }
 }
