@@ -1,29 +1,21 @@
 import { Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  private auth = inject(AuthService);
+  auth = inject(AuthService);
 
-  passcode = signal('');
-  error = signal(false);
-  checking = signal(false);
+  signingIn = signal(false);
 
-  async submit() {
-    this.checking.set(true);
-    this.error.set(false);
-    const ok = await this.auth.tryLogin(this.passcode());
-    this.checking.set(false);
-    if (!ok) {
-      this.error.set(true);
-      this.passcode.set('');
-    }
+  async signIn() {
+    this.signingIn.set(true);
+    await this.auth.loginWithGoogle();
+    this.signingIn.set(false);
   }
 }

@@ -1,6 +1,10 @@
-@if (auth.isAuthenticated()) {
+@if (!auth.authReady()) {
+  <div class="boot-loading"></div>
+} @else if (!auth.isAuthenticated()) {
+  <app-login></app-login>
+} @else if (!userData.loaded()) {
+  <div class="boot-loading"></div>
+} @else {
   <app-nav></app-nav>
   <router-outlet></router-outlet>
-} @else {
-  <app-login></app-login>
 }

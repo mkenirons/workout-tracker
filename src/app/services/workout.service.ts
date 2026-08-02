@@ -1,47 +1,40 @@
-import { Injectable, effect, signal } from '@angular/core';
+import { Injectable, computed, inject } from '@angular/core';
 import { WorkoutSession } from '../models/workout.model';
-import { loadFromStorage, saveToStorage } from './storage.util';
-
-const STORAGE_KEY = 'workout-tracker.sessions';
+import { UserDataService } from './user-data.service';
 
 @Injectable({ providedIn: 'root' })
 export class WorkoutService {
-  private readonly _sessions = signal<WorkoutSession[]>(
-    loadFromStorage(STORAGE_KEY, [])
-  );
-  readonly sessions = this._sessions.asReadonly();
+  private userData = inject(UserDataService);
 
-  constructor() {
-    effect(() => saveToStorage(STORAGE_KEY, this._sessions()));
-  }
+  readonly sessions = computed(() => this.userData.data().sessions);
 
   sortedByDateDesc(): WorkoutSession[] {
-    return [...this._sessions()].sort((a, b) => b.date.localeCompare(a.date));
+    return [...this.sessions()].sort((a, b) => b.date.localeCompare(a.date));
   }
 
   byId(id: string): WorkoutSession | undefined {
-    return this._sessions().find((s) => s.id === id);
+    return this.sessions().find((s) => s.id === id);
   }
 
   add(session: Omit<WorkoutSession, 'id'>): void {
     const newSession: WorkoutSession = { ...session, id: crypto.randomUUID() };
-    this._sessions.update((list) => [...list, newSession]);
+    this.userData.persist({ sessions: [...this.sessions(), newSession] });
   }
 
   update(id: string, changes: Partial<Omit<WorkoutSession, 'id'>>): void {
-    this._sessions.update((list) =>
-      list.map((s) => (s.id === id ? { ...s, ...changes } : s))
-    );
+    this.userData.persist({
+      sessions: this.sessions().map((s) => (s.id === id ? { ...s, ...changes } : s)),
+    });
   }
 
   remove(id: string): void {
-    this._sessions.update((list) => list.filter((s) => s.id !== id));
+    this.userData.persist({ sessions: this.sessions().filter((s) => s.id !== id) });
   }
 
   /** Heaviest single set ever logged for an exercise (personal record). */
   personalRecord(exerciseId: string): { weightKg: number; reps: number; date: string } | null {
     let best: { weightKg: number; reps: number; date: string } | null = null;
-    for (const session of this._sessions()) {
+    for (const session of this.sessions()) {
       for (const entry of session.exercises) {
         if (entry.exerciseId !== exerciseId) continue;
         for (const set of entry.sets) {
@@ -56,7 +49,12 @@ export class WorkoutService {
   }
 
   totalSessions(): number {
-    return this._sessions().length;
+    return this.sessions().length;
+  }
+
+  lastSession(): WorkoutSession | null {
+    const sorted = this.sortedByDateDesc();
+    return sorted.length > 0 ? sorted[0] : null;
   }
 
   /**
@@ -65,7 +63,7 @@ export class WorkoutService {
    */
   exerciseHistory(exerciseId: string): { date: string; weightKg: number; reps: number }[] {
     const points: { date: string; weightKg: number; reps: number }[] = [];
-    for (const session of this._sessions()) {
+    for (const session of this.sessions()) {
       const entry = session.exercises.find((e) => e.exerciseId === exerciseId);
       if (!entry) continue;
       let top: { weightKg: number; reps: number } | null = null;
@@ -78,10 +76,5 @@ export class WorkoutService {
       if (top) points.push({ date: session.date, ...top });
     }
     return points.sort((a, b) => a.date.localeCompare(b.date));
-  }
-
-  lastSession(): WorkoutSession | null {
-    const sorted = this.sortedByDateDesc();
-    return sorted.length > 0 ? sorted[0] : null;
   }
 }

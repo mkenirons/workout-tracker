@@ -1,21 +1,18 @@
 <div class="login">
-  <form class="card login__card" (ngSubmit)="submit()">
+  <div class="card login__card">
     <div class="login__brand">💪 Workout Tracker</div>
-    <p class="login__subtitle">Enter your passcode to continue</p>
-    <input
-      class="input"
-      type="password"
-      autofocus
-      [ngModel]="passcode()"
-      (ngModelChange)="passcode.set($event)"
-      name="passcode"
-      placeholder="Passcode"
-    />
-    @if (error()) {
-      <p class="login__error">Incorrect passcode</p>
-    }
-    <button type="submit" class="btn btn--primary login__submit" [disabled]="checking() || !passcode()">
-      {{ checking() ? 'Checking…' : 'Unlock' }}
+    <p class="login__subtitle">Sign in to continue</p>
+
+    <button class="btn btn--primary login__submit" [disabled]="signingIn()" (click)="signIn()">
+      @if (signingIn()) {
+        Signing in…
+      } @else {
+        Sign in with Google
+      }
     </button>
-  </form>
+
+    @if (auth.error()) {
+      <p class="login__error">{{ auth.error() }}</p>
+    }
+  </div>
 </div>

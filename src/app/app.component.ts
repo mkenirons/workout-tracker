@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { NavComponent } from './shared/nav/nav.component';
 import { LoginComponent } from './pages/login/login.component';
 import { AuthService } from './services/auth.service';
+import { UserDataService } from './services/user-data.service';
 
 @Component({
   selector: 'app-root',
@@ -14,4 +15,5 @@ import { AuthService } from './services/auth.service';
 export class AppComponent {
   title = 'workout-tracker';
   auth = inject(AuthService);
+  userData = inject(UserDataService);
 }

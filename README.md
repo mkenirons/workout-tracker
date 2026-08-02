@@ -14,9 +14,15 @@ time.
   and auto-calculated personal records; add/edit/remove exercises.
 - **Body Stats** — track weight & body fat over time against a goal, with a
   progress bar.
+- **Progress** — per-exercise strength chart (top set weight per session) with
+  hover detail and a data table.
+- **Quick-start templates** — one-tap presets for a regular training split
+  that pre-fill the exercise list for that day.
 
-All data is stored locally in the browser (`localStorage`) — no backend
-required.
+Sign-in is via Google (Firebase Authentication), and all data is stored in
+Firestore, scoped to your account and synced in real time across devices.
+Firestore security rules restrict read/write to a single allow-listed
+account — see `firestore.rules`.
 
 ## Development
 
@@ -32,4 +38,5 @@ npm test          # unit tests (Karma/Jasmine)
 
 ## Tech stack
 
-Angular 19, standalone components, signals for state management, SCSS.
+Angular 19, standalone components, signals for state management, SCSS,
+Firebase (Authentication + Firestore).
