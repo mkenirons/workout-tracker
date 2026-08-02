@@ -3,6 +3,17 @@
   margin-top: 0;
 }
 
+.template-card {
+  margin-bottom: 1rem;
+
+  &__row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+}
+
 .top-bar {
   display: flex;
   gap: 1.5rem;

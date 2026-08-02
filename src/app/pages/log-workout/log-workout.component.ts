@@ -5,6 +5,7 @@ import { ExerciseService } from '../../services/exercise.service';
 import { WorkoutService } from '../../services/workout.service';
 import { generateWorkoutName } from '../../services/workout-name.util';
 import { WorkoutExerciseEntry, WorkoutSetEntry } from '../../models/workout.model';
+import { WORKOUT_TEMPLATES } from '../../data/workout-templates.seed';
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -30,6 +31,7 @@ export class LogWorkoutComponent {
   notes = signal('');
   entries = signal<WorkoutExerciseEntry[]>([]);
   selectedExerciseId = signal<string>('');
+  templates = WORKOUT_TEMPLATES;
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -43,6 +45,29 @@ export class LogWorkoutComponent {
         this.entries.set(session.exercises.map((e) => ({ ...e, sets: e.sets.map((s) => ({ ...s })) })));
       }
     }
+  }
+
+  applyTemplate(templateId: string) {
+    const template = this.templates.find((t) => t.id === templateId);
+    if (!template) return;
+    if (this.entries().length > 0 && !confirm(`Replace the current exercise list with "${template.label}"?`)) {
+      return;
+    }
+
+    const templateEntries: WorkoutExerciseEntry[] = this.exercises()
+      .filter((ex) => template.muscleGroups.includes(ex.muscleGroup))
+      .map((ex) => ({
+        exerciseId: ex.id,
+        exerciseName: ex.name,
+        sets: Array.from({ length: ex.targetSets || 3 }, (_, i) => ({
+          setNumber: i + 1,
+          weightKg: null,
+          reps: null,
+        })),
+      }));
+
+    this.entries.set(templateEntries);
+    this.name.set(template.label);
   }
 
   addExercise() {

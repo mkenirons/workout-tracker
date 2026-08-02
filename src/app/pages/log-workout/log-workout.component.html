@@ -4,6 +4,15 @@
     {{ editingId() ? 'Update the date, exercises, sets, or name.' : 'Pick a date, add exercises, and record your sets.' }}
   </p>
 
+  <div class="card template-card">
+    <label class="label">Quick start</label>
+    <div class="template-card__row">
+      @for (t of templates; track t.id) {
+        <button class="btn" (click)="applyTemplate(t.id)">{{ t.label }}</button>
+      }
+    </div>
+  </div>
+
   <div class="card top-bar">
     <div>
       <label class="label">Date</label>
