@@ -144,6 +144,8 @@ export class UserDataService {
 
   async persist(partial: Partial<UserData>): Promise<void> {
     if (!this.docRef) return;
-    await setDoc(this.docRef, partial, { merge: true });
+    // Firestore rejects `undefined` field values (e.g. an optional `notes`
+    // field left blank); JSON round-tripping drops them like `JSON.stringify` does.
+    await setDoc(this.docRef, JSON.parse(JSON.stringify(partial)), { merge: true });
   }
 }
