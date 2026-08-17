@@ -42,6 +42,34 @@ function readLegacyLocalData(): UserData {
   };
 }
 
+/**
+ * Guards the one-time legacy import below so it can only ever add data once
+ * per browser, never resurrect something deleted afterward via Firestore.
+ */
+const LEGACY_MERGE_FLAG_KEY = 'workout-tracker.legacy-merged-v1';
+
+function mergeById<T extends { id: string }>(base: T[], extra: T[]): T[] {
+  const existingIds = new Set(base.map((item) => item.id));
+  return [...base, ...extra.filter((item) => !existingIds.has(item.id))];
+}
+
+/**
+ * Folds any not-yet-imported per-device legacy data into `current`. Needed
+ * because the Firestore doc may already exist (created empty from another
+ * device) by the time this browser's legacy localStorage is seen, in which
+ * case the plain "doc missing -> seed from local" path never runs.
+ */
+function mergeLegacyLocalData(current: UserData): UserData {
+  const legacy = readLegacyLocalData();
+  const goalIsUnset = current.bodyGoal.startWeightKg === 0 && current.bodyGoal.targetWeightKg === 0;
+  return {
+    exercises: mergeById(current.exercises, legacy.exercises),
+    sessions: mergeById(current.sessions, legacy.sessions),
+    bodyStats: mergeById(current.bodyStats, legacy.bodyStats),
+    bodyGoal: goalIsUnset ? legacy.bodyGoal : current.bodyGoal,
+  };
+}
+
 @Injectable({ providedIn: 'root' })
 export class UserDataService {
   private core = inject(FirebaseCoreService);
@@ -78,15 +106,30 @@ export class UserDataService {
         async (snap) => {
           if (snap.exists()) {
             const raw = snap.data() as Partial<UserData>;
-            this._data.set({
+            let current: UserData = {
               exercises: raw.exercises ?? EXERCISE_SEED,
               sessions: raw.sessions ?? [],
               bodyStats: raw.bodyStats ?? [],
               bodyGoal: raw.bodyGoal ?? BODY_GOAL_SEED,
-            });
+            };
+
+            if (!localStorage.getItem(LEGACY_MERGE_FLAG_KEY)) {
+              const merged = mergeLegacyLocalData(current);
+              const changed =
+                merged.sessions.length !== current.sessions.length ||
+                merged.bodyStats.length !== current.bodyStats.length ||
+                merged.exercises.length !== current.exercises.length ||
+                merged.bodyGoal !== current.bodyGoal;
+              if (changed) await setDoc(ref, merged, { merge: true });
+              current = merged;
+              localStorage.setItem(LEGACY_MERGE_FLAG_KEY, '1');
+            }
+
+            this._data.set(current);
           } else {
             const seed = readLegacyLocalData();
             await setDoc(ref, seed);
+            localStorage.setItem(LEGACY_MERGE_FLAG_KEY, '1');
           }
           this._loaded.set(true);
         },
