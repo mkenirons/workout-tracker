@@ -2,6 +2,11 @@
   <div class="boot-loading"></div>
 } @else if (!auth.isAuthenticated()) {
   <app-login></app-login>
+} @else if (userData.error()) {
+  <div class="boot-error">
+    <p>Couldn't load your data: {{ userData.error() }}</p>
+    <button class="btn btn--primary" (click)="auth.logout()">Sign out</button>
+  </div>
 } @else if (!userData.loaded()) {
   <div class="boot-loading"></div>
 } @else {

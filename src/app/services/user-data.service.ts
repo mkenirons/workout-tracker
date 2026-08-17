@@ -49,11 +49,13 @@ export class UserDataService {
 
   private readonly _data = signal<UserData>(defaultUserData());
   private readonly _loaded = signal(false);
+  private readonly _error = signal<string | null>(null);
   private unsubscribe: Unsubscribe | null = null;
   private docRef: DocumentReference | null = null;
 
   readonly data = this._data.asReadonly();
   readonly loaded = this._loaded.asReadonly();
+  readonly error = this._error.asReadonly();
 
   constructor() {
     effect((onCleanup) => {
@@ -62,6 +64,7 @@ export class UserDataService {
       this.unsubscribe = null;
       this.docRef = null;
       this._loaded.set(false);
+      this._error.set(null);
 
       if (!user) {
         this._data.set(defaultUserData());
@@ -70,21 +73,27 @@ export class UserDataService {
 
       const ref = doc(this.core.firestore, 'users', user.uid);
       this.docRef = ref;
-      this.unsubscribe = onSnapshot(ref, async (snap) => {
-        if (snap.exists()) {
-          const raw = snap.data() as Partial<UserData>;
-          this._data.set({
-            exercises: raw.exercises ?? EXERCISE_SEED,
-            sessions: raw.sessions ?? [],
-            bodyStats: raw.bodyStats ?? [],
-            bodyGoal: raw.bodyGoal ?? BODY_GOAL_SEED,
-          });
-        } else {
-          const seed = readLegacyLocalData();
-          await setDoc(ref, seed);
-        }
-        this._loaded.set(true);
-      });
+      this.unsubscribe = onSnapshot(
+        ref,
+        async (snap) => {
+          if (snap.exists()) {
+            const raw = snap.data() as Partial<UserData>;
+            this._data.set({
+              exercises: raw.exercises ?? EXERCISE_SEED,
+              sessions: raw.sessions ?? [],
+              bodyStats: raw.bodyStats ?? [],
+              bodyGoal: raw.bodyGoal ?? BODY_GOAL_SEED,
+            });
+          } else {
+            const seed = readLegacyLocalData();
+            await setDoc(ref, seed);
+          }
+          this._loaded.set(true);
+        },
+        (err) => {
+          this._error.set(err.message ?? 'Failed to load your data from Firestore.');
+        },
+      );
 
       onCleanup(() => this.unsubscribe?.());
     });
